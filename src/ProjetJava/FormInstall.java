@@ -17,7 +17,7 @@ public class FormInstall extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JLabel idInstall, date, commentaire, dureeInstall, refProcedure, dateValidation, softLab, osLab, reseauLab;
 	private JTextField textIdInstall, textJour, textMois, textAnnee, textCommentaire, textDureeInstall, textRefProcedure, textJourValid, textMoisValid, textAnneeValid;
-	private JComboBox<String> comboSoft, comboOS, comboReseau;
+	private JComboBox comboSoft, comboOS, comboAdmin;
 	private JRadioButton boutInstall1, boutInstall2, boutValid1, boutValid2, boutValid3;
 	private ButtonGroup groupBoutTypeInstall, groupBoutValid;
 	private JButton boutEnvoi;
@@ -49,8 +49,11 @@ public class FormInstall extends JPanel {
 		textRefProcedure = new JTextField(40);
 		
 		boutValid1 = new JRadioButton("Terminée",true);
+		boutValid1.setActionCommand("Terminée");
 		boutValid2 = new JRadioButton("En Cours",false);
+		boutValid2.setActionCommand("En Cours");
 		boutValid3 = new JRadioButton("À Prévoir",false);
+		boutValid3.setActionCommand("À Prévoir");
 		groupBoutValid = new ButtonGroup();
 		groupBoutValid.add(boutValid1);
 		groupBoutValid.add(boutValid2);
@@ -67,7 +70,7 @@ public class FormInstall extends JPanel {
 		
 		comboSoft = new JComboBox(getCombo( "soft"));
 		softLab =new JLabel("Software: ");
-		comboReseau = new JComboBox(getCombo( "admin"));
+		comboAdmin = new JComboBox(getCombo( "admin"));
 		reseauLab = new JLabel("Admininstateur Réseaux: ");
 		comboOS = new JComboBox(getCombo( "OS"));
 		osLab = new JLabel("OS: ");
@@ -162,7 +165,7 @@ public class FormInstall extends JPanel {
 		add(reseauLab,c);
 		c.gridx = 1;
 		c.gridy = 9;
-		add(comboReseau,c);
+		add(comboAdmin,c);
 		//ligne 11 (à prevoir)
 		c.gridx = 0;
 		c.gridy = 10;
@@ -277,7 +280,7 @@ public class FormInstall extends JPanel {
 								//Boite de dialogue "êtes vous sur"
 								int option = JOptionPane.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 								if(option == JOptionPane.OK_OPTION) {
-									
+									sendDataInDB();
 								}
 							}
 						}else {
@@ -285,7 +288,7 @@ public class FormInstall extends JPanel {
 							JOptionPane jopOuiNon = new JOptionPane();
 							int option = jopOuiNon.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 							if(option == JOptionPane.OK_OPTION) {
-								//System.out.println(String.valueOf(comboOS.getSelectedItem()));
+								
 								sendDataInDB();
 							}
 						}
@@ -312,7 +315,6 @@ public class FormInstall extends JPanel {
 				throw new DateException(jourInt, moisInt, anneeInt);
 				
 			}else {
-				//on créé un gregorianCalendar et on le convertit en SQL date
 				verif = true;	
 			}
 			
@@ -404,22 +406,94 @@ public class FormInstall extends JPanel {
 		return tabCombo;
 	}
 	
+	private String getCodeOS() {		//Méthode pour recupérer le CodesOS de la DB à partir du nom de l'OS
+		Connection connect = FenetrePrincipal.getConnection();
+		String codeOS = null;
+		try {
+			String os = String.valueOf(comboOS.getSelectedItem());
+			String requeteOS = "select CodeOS from OS where Libelle = ?";
+			PreparedStatement prepStatOS = connect.prepareStatement(requeteOS);
+			prepStatOS.setString(1, os);
+			ResultSet resultOS = prepStatOS.executeQuery();
+			
+			while(resultOS.next()) {
+				codeOS = resultOS.getString(1);
+			}
+			
+			connect.close();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return codeOS;
+	}
+	
+	private String getCodeSoft() {		//Méthode pour recupérer le CodesOS de la DB à partir du nom de l'OS
+		Connection connect = FenetrePrincipal.getConnection();
+		String codeSoft = null;
+		try {
+			String soft = String.valueOf(comboSoft.getSelectedItem());
+			String requeteSoft = "select CodeSoftware from Software where Nom = ?";
+			PreparedStatement prepStatSoft = connect.prepareStatement(requeteSoft);
+			prepStatSoft.setString(1, soft);
+			ResultSet resultSoft = prepStatSoft.executeQuery();
+			
+			while(resultSoft.next()) {
+				codeSoft = resultSoft.getString(1);
+			}
+			
+			connect.close();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return codeSoft;
+	}
+	
+	private String getCodeAdmin() {
+		Connection connect = FenetrePrincipal.getConnection();
+		String codeAdmin = null;
+		try {
+			String admin = String.valueOf(comboAdmin.getSelectedItem());
+			String requeteAdmin = "select Matricule from ResponsableReseaux where NomPrenom = ?";
+			PreparedStatement prepStatAdmin = connect.prepareStatement(requeteAdmin);
+			prepStatAdmin.setString(1, admin);
+			ResultSet resultAdmin = prepStatAdmin.executeQuery();
+			
+			while(resultAdmin.next()) {
+				codeAdmin = resultAdmin.getString(1);
+			}
+			
+			connect.close();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return codeAdmin;
+	}
+	
+	//Methode d'envoie des données dans la DB
 	private void sendDataInDB() {
 		java.sql.Date dateInstall;
 		java.sql.Date dateValidation;
-		String dureeInstall;
+		
 		Connection connect = FenetrePrincipal.getConnection();
 
 		int id = getIdInstallBD();
 		dateInstall = getDate(textJour,textMois,textAnnee);	
 		String commentaire = textCommentaire.getText();
+		int dureeInstall = Integer.parseInt(textDureeInstall.getText());
+		boolean typeInstall = boutInstall1.isSelected();	
+		String refProcedure = textRefProcedure.getText();	
+		String validation = groupBoutValid.getSelection().getActionCommand(); //Pour avoir la valeur du bouton radio choisit
 		
-		if(verifDureeInstall (textDureeInstall)) {
-			dureeInstall = textDureeInstall.getText();
-			if(boutValid3.isSelected() == true) {
-				dateValidation = getDate(textJourValid,textMoisValid,textAnneeValid);
-			}
+		System.out.println(getCodeOS());
+		System.out.println(getCodeSoft());
+		System.out.println(getCodeAdmin());
+		
+		if(boutValid3.isSelected() == true) {
+			dateValidation = getDate(textJourValid,textMoisValid,textAnneeValid);
 		}
+		
+		
+		
 	}
 	
 }
