@@ -2,10 +2,12 @@ package ProjetJava;
 
 import javax.swing.*;
 
+import accessBD.AccessBDGen;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import java.sql.ResultSet;
@@ -19,9 +21,8 @@ public class FormInstall extends JPanel {
 	private JRadioButton boutInstall1, boutInstall2, boutValid1, boutValid2, boutValid3;
 	private ButtonGroup groupBoutTypeInstall, groupBoutValid;
 	private JButton boutEnvoi;
-	private JFrame fenetreParent;
 	
-	public FormInstall( ) /*throws DateException */{
+	public FormInstall( ) /*throws DateException*/ {
 		
 		idInstall = new JLabel("ID installations: ");
 		textIdInstall = new JTextField(String.valueOf(getIdInstallBD()));
@@ -64,14 +65,11 @@ public class FormInstall extends JPanel {
 		textMoisValid.setVisible(false);
 		textAnneeValid.setVisible(false);
 		
-		String[] softwareList = {"Bob50","NetBeans","Office 2013","Visual Studio","Oracle 11g"};
-		comboSoft = new JComboBox<String>(softwareList);
+		comboSoft = new JComboBox(getCombo( "soft"));
 		softLab =new JLabel("Software: ");
-		String[] responsableList = {"Marvin Gobin","André Van Kerrebroeck"};
-		comboReseau = new JComboBox<String>(responsableList);
-		reseauLab = new JLabel("Admin: ");
-		String[] oSList = {"Fedora","Mint","RedHat8","Ubuntu","Win7 pro FR","Win8 pro EN","Win8 pro FR"};
-		comboOS = new JComboBox<String>(oSList);
+		comboReseau = new JComboBox(getCombo( "admin"));
+		reseauLab = new JLabel("Admininstateur Réseaux: ");
+		comboOS = new JComboBox(getCombo( "OS"));
 		osLab = new JLabel("OS: ");
 		
 		boutEnvoi =new JButton("Terminer");
@@ -206,7 +204,8 @@ public class FormInstall extends JPanel {
 		GestioBoutEnvoi EnvoiEvent = new GestioBoutEnvoi();
 		boutEnvoi.addActionListener(EnvoiEvent);
 		
-		getIdInstallBD();
+		
+		
 	}
 	
 		//Evenement pour afficher la date de validation si le bouton à prevoir est coché
@@ -226,7 +225,7 @@ public class FormInstall extends JPanel {
 		}
 	}
 	
-		//Evenement pour vider les textField des date
+		//Evenement pour vider les textField des jours, mois, annee
 	private class GestioViderField implements MouseListener {
 		public void mouseClicked(MouseEvent e) {
 			if(e.getSource() == textJour) {
@@ -265,105 +264,164 @@ public class FormInstall extends JPanel {
 	private class GestioBoutEnvoi implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			
+			
 		//verification Date de l'installation
-			if(verifDate(textJour,textMois,textAnnee) != null) {
-				java.sql.Date sqlD = verifDate(textJour,textMois,textAnnee);
-				
-				if(verifDureeInstall (textDureeInstall)) {
-			//verification Date de validation + si le bouton à prevoir est coché
-					if(boutValid3.isSelected() == true ) {
-						if(verifDate(textJourValid, textMoisValid, textAnneeValid) != null) {
-							java.sql.Date sqlDValid = verifDate(textJourValid, textMoisValid, textAnneeValid);
-						
+			try {
+				if(verifDate(textJour,textMois,textAnnee)) {
+					
+					if(verifDureeInstall (textDureeInstall)) {
+				//verification Date de validation + si le bouton à prevoir est coché
+						if(boutValid3.isSelected() == true ) {
+							if(verifDate(textJourValid, textMoisValid, textAnneeValid)) {
+							
+								//Boite de dialogue "êtes vous sur"
+								int option = JOptionPane.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+								if(option == JOptionPane.OK_OPTION) {
+									
+								}
+							}
+						}else {
 							//Boite de dialogue "êtes vous sur"
 							JOptionPane jopOuiNon = new JOptionPane();
 							int option = jopOuiNon.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 							if(option == JOptionPane.OK_OPTION) {
-						
+								//System.out.println(String.valueOf(comboOS.getSelectedItem()));
+								sendDataInDB();
 							}
-						}
-					}else {
-						//Boite de dialogue "êtes vous sur"
-						JOptionPane jopOuiNon = new JOptionPane();
-						int option = jopOuiNon.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-						if(option == JOptionPane.OK_OPTION) {
-						
 						}
 					}
 				}
+			} catch (DateException e1) {
+				//Boite de dialogue si la date n'est pas bonne 
+				JOptionPane.showMessageDialog(null, e1.toString(), "Erreur", JOptionPane.ERROR_MESSAGE);
 			}	
 		}
 	}
 	
 	
-	//fonction de verification des dates et renvois de celle-ci en format sql
-	private java.sql.Date verifDate (JTextField jour, JTextField mois, JTextField annee) /*throws DateException*/ {
-	
+	//fonction de verification des dates
+	private boolean verifDate (JTextField jour, JTextField mois, JTextField annee) throws DateException {
+		boolean verif = false;
 		try {
 			int jourInt = Integer.parseInt(jour.getText());
 			int moisInt = Integer.parseInt(mois.getText());
 			int anneeInt = Integer.parseInt(annee.getText());
-			/*
-			if(jourInt < 0 || jourInt > 31) {
-				//JOptionPane.showMessageDialog(null, "Date invalide", "Erreur", JOptionPane.ERROR_MESSAGE);									
-				//throw new DateException();
+			
+			//Si le jour et le mois sont correct
+			if(jourInt < 1 || jourInt > 31 || moisInt < 1 || moisInt > 12 || anneeInt < 2000 || anneeInt > 2100) {
+				throw new DateException(jourInt, moisInt, anneeInt);
 				
 			}else {
-			
-				GregorianCalendar date1 = new GregorianCalendar(anneeInt, moisInt - 1, jourInt);
-				java.sql.Date sqlD = new java.sql.Date(date1.getTimeInMillis());
-			
-				return sqlD;
+				//on créé un gregorianCalendar et on le convertit en SQL date
+				verif = true;	
 			}
-			*/
 			
-			GregorianCalendar date1 = new GregorianCalendar(anneeInt, moisInt - 1, jourInt);
-			java.sql.Date sqlD = new java.sql.Date(date1.getTimeInMillis());
-		
-			return sqlD;
 		}catch( java.lang.NumberFormatException ex1) {
+			//Si la valeur rentrée n'est pas un INT, une exception est généré et on renvoie NULL
 			JOptionPane.showMessageDialog(null, "Date invalide", "Erreur", JOptionPane.ERROR_MESSAGE);
-			java.sql.Date dateNull = null;
-			return dateNull;
 			
 		}
+		return verif;
+		
+	}
+	
+	//Methode pour retourner une date sous le format SQL
+	private java.sql.Date getDate (JTextField jour, JTextField mois, JTextField annee){
+		java.sql.Date sqlD;
+		
+		int jourInt = Integer.parseInt(jour.getText());
+		int moisInt = Integer.parseInt(mois.getText());
+		int anneeInt = Integer.parseInt(annee.getText());
+		
+		GregorianCalendar date1 = new GregorianCalendar(anneeInt, moisInt - 1, jourInt);
+		sqlD = new java.sql.Date(date1.getTimeInMillis());
+		return sqlD;
 	}
 	
 	//Methode verification Numéro de référence
 	private boolean verifDureeInstall (JTextField field) {
+		boolean verif = false;
 		try {
-			int nbDuree = Integer.parseInt(field.getText());
-			return true;
+			Integer.parseInt(field.getText());
+			verif = true;
 			
 			
 		}catch(java.lang.NumberFormatException ex1) {
-			JOptionPane.showMessageDialog(null, "Duree Installation Invalide", "Erreur", JOptionPane.ERROR_MESSAGE);
-			int nbDureeNull = 0;
-			return false;
+			JOptionPane.showMessageDialog(null, "Durée Installation Invalide", "Erreur", JOptionPane.ERROR_MESSAGE);
 		}
+		return verif;
 	}
 	
 	//Methode pour récupérer l'id d'installation dans la DB et rajouter 1
 	private int getIdInstallBD() {
+		int compt;
 		try {
-			Connection connect = FenetrePrincipal.connection();
+			//connection à la DB récupérer par la Fenetre Principal
+			Connection connect = FenetrePrincipal.getConnection();
 			String sqlInstruction = "select IdInstallation from Installation";
-			ResultSet result = connect.createStatement().executeQuery(sqlInstruction);
+			ResultSet result = connect.createStatement().executeQuery(sqlInstruction);	//récupération des infos demandés dans une variable
 			
-			int compt = 0;
+			//on compte le nombre d'id et retourne le résultat + 1		
+			compt = 1;
 			while(result.next()) {
 				compt++;
 			}		
 			
-			connect.close();
-			return compt + 1;
+			connect.close();		
 			
 		}catch(SQLException e) {
 			e.getMessage();
-			int nbNull =0;
-			return nbNull;
+			compt = 0;
+		}
+		return compt;
+	}
+	
+	//Methode pour retourner les valeur des comboBos OS, admin et software 
+	private Object[] getCombo(String type) {
+		Object[] tabCombo = null;
+		Connection connect = FenetrePrincipal.getConnection();
+		String sqlInstruction;
+		PreparedStatement result;
+		try {
+			if(type == "OS") {								//pour les OS
+				sqlInstruction = "select Libelle from OS";
+				result = connect.prepareStatement(sqlInstruction);
+				tabCombo = AccessBDGen.creerListe1Colonne(result);
+			}else if(type == "admin") {						//pour les admins
+				sqlInstruction = "select NomPrenom from ResponsableReseaux";
+				result = connect.prepareStatement(sqlInstruction);
+				tabCombo = AccessBDGen.creerListe1Colonne(result);
+			}else if(type == "soft"){						//pour les softwares
+				sqlInstruction = "select Nom from Software";
+				result = connect.prepareStatement(sqlInstruction);
+				tabCombo = AccessBDGen.creerListe1Colonne(result);
+			}
+			connect.close();
+			
+		}catch(SQLException e) {
+			e.getMessage();
+		}
+		return tabCombo;
+	}
+	
+	private void sendDataInDB() {
+		java.sql.Date dateInstall;
+		java.sql.Date dateValidation;
+		String dureeInstall;
+		Connection connect = FenetrePrincipal.getConnection();
+
+		int id = getIdInstallBD();
+		dateInstall = getDate(textJour,textMois,textAnnee);	
+		String commentaire = textCommentaire.getText();
+		
+		if(verifDureeInstall (textDureeInstall)) {
+			dureeInstall = textDureeInstall.getText();
+			if(boutValid3.isSelected() == true) {
+				dateValidation = getDate(textJourValid,textMoisValid,textAnneeValid);
+			}
 		}
 	}
+	
 }
 
 
