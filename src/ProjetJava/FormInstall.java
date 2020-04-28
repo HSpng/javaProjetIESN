@@ -21,9 +21,9 @@ public class FormInstall extends JPanel {
 	private JRadioButton boutInstall1, boutInstall2, boutValid1, boutValid2, boutValid3;
 	private ButtonGroup groupBoutTypeInstall, groupBoutValid;
 	private JButton boutEnvoi;
-	private JFrame FenetreParent;
+	private FenetrePrincipal FenetreParent;
 	
-	public FormInstall(JFrame fen ) {
+	public FormInstall(FenetrePrincipal fen ) {
 		FenetreParent = fen;
 		
 		idInstall = new JLabel("ID installations: ");
@@ -282,16 +282,22 @@ public class FormInstall extends JPanel {
 								int option = JOptionPane.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 								if(option == JOptionPane.OK_OPTION) {
 									sendDataInDB();
-									
+									FenetreParent.getCont().removeAll();
+									FenetreParent.getCont().add(new FormInstall(FenetreParent));
+									FenetreParent.getCont().repaint();
+									FenetreParent.getCont().revalidate();									
 								}
 							}
 						}else {
 							//Boite de dialogue "êtes vous sur"
 							JOptionPane jopOuiNon = new JOptionPane();
 							int option = jopOuiNon.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-							if(option == JOptionPane.OK_OPTION) {
-								
+							if(option == JOptionPane.OK_OPTION) {								
 								sendDataInDB();
+								FenetreParent.getCont().removeAll();
+								FenetreParent.getCont().add(new FormInstall(FenetreParent));
+								FenetreParent.getCont().repaint();
+								FenetreParent.getCont().revalidate();	
 							}
 						}
 					}

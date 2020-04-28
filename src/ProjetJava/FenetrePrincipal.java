@@ -57,8 +57,8 @@ public class FenetrePrincipal extends JFrame{
     	cont.add(message);
     	setVisible(true);
     	
-    	
     	formulaireInstall = new FormInstall(this);
+    	
     	//Evenenment menu nouveau formulaire
     	newInstall.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) { 			
