@@ -57,21 +57,22 @@ public class FenetrePrincipal extends JFrame{
     	cont.add(message);
     	setVisible(true);
     	
+    	
+    	formulaireInstall = new FormInstall(this);
     	//Evenenment menu nouveau formulaire
     	newInstall.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) { 			
     			cont.removeAll();
-    			formulaireInstall = new FormInstall();
+    			
 				cont.add(formulaireInstall);
 				cont.repaint();
 				cont.revalidate();
 				cont.setLayout(new FlowLayout());    			 			
     		}
-    	});
-    	
+    	});   	
     }
-    
-    public static Connection getConnection() {
+
+	public static Connection getConnection() {
     	Connection connect;
     	try {
     		connect = AccessBDGen.connecter("DbInstallations", "root", "Tigrou007=");
@@ -82,6 +83,10 @@ public class FenetrePrincipal extends JFrame{
     	}
     	return connect;
     }
+
+	public Container getCont() {
+		return cont;
+	}
 
 }
 

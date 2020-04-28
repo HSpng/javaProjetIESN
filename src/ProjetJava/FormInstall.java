@@ -9,7 +9,7 @@ import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
+import java.sql.Types;
 import java.sql.ResultSet;
 import java.util.GregorianCalendar;
 
@@ -17,12 +17,14 @@ public class FormInstall extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JLabel idInstall, date, commentaire, dureeInstall, refProcedure, dateValidation, softLab, osLab, reseauLab;
 	private JTextField textIdInstall, textJour, textMois, textAnnee, textCommentaire, textDureeInstall, textRefProcedure, textJourValid, textMoisValid, textAnneeValid;
-	private JComboBox comboSoft, comboOS, comboAdmin;
+	private JComboBox<Object> comboSoft, comboOS, comboAdmin;
 	private JRadioButton boutInstall1, boutInstall2, boutValid1, boutValid2, boutValid3;
 	private ButtonGroup groupBoutTypeInstall, groupBoutValid;
 	private JButton boutEnvoi;
+	private JFrame FenetreParent;
 	
-	public FormInstall( ) /*throws DateException*/ {
+	public FormInstall(JFrame fen ) {
+		FenetreParent = fen;
 		
 		idInstall = new JLabel("ID installations: ");
 		textIdInstall = new JTextField(String.valueOf(getIdInstallBD()));
@@ -68,11 +70,11 @@ public class FormInstall extends JPanel {
 		textMoisValid.setVisible(false);
 		textAnneeValid.setVisible(false);
 		
-		comboSoft = new JComboBox(getCombo( "soft"));
+		comboSoft = new JComboBox<Object>(getCombo( "soft"));
 		softLab =new JLabel("Software: ");
-		comboAdmin = new JComboBox(getCombo( "admin"));
+		comboAdmin = new JComboBox<Object>(getCombo( "admin"));
 		reseauLab = new JLabel("Admininstateur Réseaux: ");
-		comboOS = new JComboBox(getCombo( "OS"));
+		comboOS = new JComboBox<Object>(getCombo( "OS"));
 		osLab = new JLabel("OS: ");
 		
 		boutEnvoi =new JButton("Terminer");
@@ -266,8 +268,7 @@ public class FormInstall extends JPanel {
 	//Evenement bouton terminer
 	private class GestioBoutEnvoi implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
-			
+				
 		//verification Date de l'installation
 			try {
 				if(verifDate(textJour,textMois,textAnnee)) {
@@ -281,6 +282,7 @@ public class FormInstall extends JPanel {
 								int option = JOptionPane.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 								if(option == JOptionPane.OK_OPTION) {
 									sendDataInDB();
+									
 								}
 							}
 						}else {
@@ -427,7 +429,7 @@ public class FormInstall extends JPanel {
 		return codeOS;
 	}
 	
-	private String getCodeSoft() {		//Méthode pour recupérer le CodesOS de la DB à partir du nom de l'OS
+	private String getCodeSoft() {		//Méthode pour recupérer le CodesSoftware de la DB à partir du nom du Software
 		Connection connect = FenetrePrincipal.getConnection();
 		String codeSoft = null;
 		try {
@@ -471,25 +473,54 @@ public class FormInstall extends JPanel {
 	
 	//Methode d'envoie des données dans la DB
 	private void sendDataInDB() {
-		java.sql.Date dateInstall;
-		java.sql.Date dateValidation;
+		java.sql.Date dateValidation = null;
 		
 		Connection connect = FenetrePrincipal.getConnection();
 
 		int id = getIdInstallBD();
-		dateInstall = getDate(textJour,textMois,textAnnee);	
+		java.sql.Date dateInstall = getDate(textJour,textMois,textAnnee);	
 		String commentaire = textCommentaire.getText();
 		int dureeInstall = Integer.parseInt(textDureeInstall.getText());
 		boolean typeInstall = boutInstall1.isSelected();	
 		String refProcedure = textRefProcedure.getText();	
 		String validation = groupBoutValid.getSelection().getActionCommand(); //Pour avoir la valeur du bouton radio choisit
 		
-		System.out.println(getCodeOS());
-		System.out.println(getCodeSoft());
-		System.out.println(getCodeAdmin());
-		
 		if(boutValid3.isSelected() == true) {
 			dateValidation = getDate(textJourValid,textMoisValid,textAnneeValid);
+		}
+		
+		try {
+			String InstructionSQL = "insert into Installation (IdInstallation, DateInstallation, TypeInstallation, Commentaires, DureeInstallation, RefProcedureInstallation, Validation, DateValidation, CodeSoftware, Matricule, CodeOS)"
+					+ "				values(?,?,?,?,?,?,?,?,?,?,?)";
+			PreparedStatement prepStat = connect.prepareStatement(InstructionSQL);
+			
+			prepStat.setInt(1, id);
+			prepStat.setDate(2, dateInstall);
+			prepStat.setBoolean(3, typeInstall);
+			if(commentaire == "") {
+				prepStat.setNull(4, Types.VARCHAR);
+			}else {
+				prepStat.setString(4, commentaire);
+			}
+			prepStat.setInt(5, dureeInstall);
+			if(refProcedure == "") {
+				prepStat.setNull(6, Types.INTEGER);
+			}else {
+				prepStat.setString(6,refProcedure);
+			}
+			prepStat.setString(7, validation);
+			if(dateValidation == null) {
+				prepStat.setNull(8, Types.TIMESTAMP);
+			}else {
+				prepStat.setDate(8, dateValidation);
+			}
+			prepStat.setString(9, getCodeSoft());
+			prepStat.setString(10, getCodeAdmin());
+			prepStat.setString(11, getCodeOS());
+			
+			System.out.println("lignes modifiées : "+prepStat.executeUpdate());
+		}catch(SQLException e) {
+			
 		}
 		
 		
