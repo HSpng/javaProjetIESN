@@ -6,26 +6,26 @@ import accessBD.AccessBDGen;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.sql.ResultSet;
 import java.util.GregorianCalendar;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 public class FormInstall extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private JLabel idInstall, date, commentaire, dureeInstall, refProcedure, dateValidation, softLab, osLab, reseauLab;
+	private JLabel idInstall, date, commentaire, dureeInstall, refProcedure, dateValidation, softLab, osLab, reseauLab, titreLab;
 	private JTextField textIdInstall, textJour, textMois, textAnnee, textCommentaire, textDureeInstall, textRefProcedure, textJourValid, textMoisValid, textAnneeValid;
 	private JComboBox<Object> comboSoft, comboOS, comboAdmin;
 	private JRadioButton boutInstall1, boutInstall2, boutValid1, boutValid2, boutValid3;
 	private ButtonGroup groupBoutTypeInstall, groupBoutValid;
 	private JButton boutEnvoi;
-	private FenetrePrincipal FenetreParent;
 	
-	public FormInstall(FenetrePrincipal fen ) {
-		FenetreParent = fen;
-		
+	public FormInstall() {
+		titreLab = new JLabel("Encoder une nouvelle installation");
+		titreLab.setFont(new Font("Calibri", Font.PLAIN, 17));
 		idInstall = new JLabel("ID installations: ");
 		textIdInstall = new JTextField(String.valueOf(getIdInstallBD()));
 		textIdInstall.setEditable(false);
@@ -83,62 +83,68 @@ public class FormInstall extends JPanel {
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(5, 5, 5, 5);
+		c.gridx = 1;
+		c.gridy = 0;
+		c.gridwidth = 2;
+		c.anchor = GridBagConstraints.LINE_START;
+		add(titreLab,c);
 		//ligne 1
 		c.gridx = 0;
-		c.gridy = 0;
+		c.gridy = 1;
+		c.gridwidth = 1;
 		c.anchor = GridBagConstraints.LINE_START;
 		add(idInstall,c);
 		c.gridx = 1;
-		c.gridy = 0;
+		c.gridy = 1;
 		add(textIdInstall,c);
 		//ligne 2
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 2;
 		add(date,c);
 		c.gridx = 1;
-		c.gridy = 1;
+		c.gridy = 2;
 		c.anchor = GridBagConstraints.LINE_START;
 		add(textJour,c);
 		c.gridx = 1;
-		c.gridy = 1;
+		c.gridy = 2;
 		c.anchor = GridBagConstraints.CENTER;
 		add(textMois,c);
 		c.gridx = 1;
-		c.gridy = 1;
+		c.gridy = 2;
 		c.anchor = GridBagConstraints.LINE_END;
 		add(textAnnee,c);
 		//ligne 3
 		c.gridx = 0;
-		c.gridy = 2;
+		c.gridy = 3;
 		c.anchor = GridBagConstraints.LINE_START;
 		add(boutInstall1,c);
 		c.gridx = 1;
-		c.gridy = 2;
+		c.gridy = 3;
 		add(boutInstall2,c);
 		//ligne 4
 		c.gridx = 0;
-		c.gridy = 3;
+		c.gridy = 4;
 		add(commentaire,c);
-		c.gridwidth = 3;
+		c.gridwidth = 2;
 		c.gridx = 1;
 		add(textCommentaire, c);
 		//ligne 5
 		c.gridx = 0;
-		c.gridy = 4;
+		c.gridy = 5;
 		c.gridwidth = 1;
 		add(dureeInstall,c);
 		c.gridx = 1;
 		add(textDureeInstall,c);
 		//ligne 6
 		c.gridx = 0;
-		c.gridy = 5;
+		c.gridy = 6;
 		add(refProcedure,c);
 		c.gridx = 1;
-		c.gridwidth = 3;
+		c.gridwidth = 2;
 		add(textRefProcedure,c);
 		//ligne 7
 		c.gridx = 0;
-		c.gridy = 6;
+		c.gridy = 7;
 		c.gridwidth = 1;
 		add(boutValid1,c);
 		c.gridx = 1;
@@ -148,45 +154,45 @@ public class FormInstall extends JPanel {
 		add(boutValid3,c);
 		//ligne 8
 		c.gridx = 0;
-		c.gridy = 7;
+		c.gridy = 8;
 		c.anchor = GridBagConstraints.LINE_START;
 		add(softLab,c);
 		c.gridx = 1;
-		c.gridy = 7;
+		c.gridy = 8;
 		add(comboSoft,c);
 		//ligne 9
 		c.gridx = 0;
-		c.gridy = 8;
+		c.gridy = 9;
 		add(osLab,c);
 		c.gridx = 1;
-		c.gridy = 8;
+		c.gridy = 9;
 		add(comboOS,c);
 		//ligne 10
 		c.gridx = 0;
-		c.gridy = 9;
+		c.gridy = 10;
 		add(reseauLab,c);
 		c.gridx = 1;
-		c.gridy = 9;
+		c.gridy = 10;
 		add(comboAdmin,c);
 		//ligne 11 (à prevoir)
 		c.gridx = 0;
-		c.gridy = 10;
+		c.gridy = 11;
 		add(dateValidation,c);
 		c.gridx = 1;
-		c.gridy = 10;
+		c.gridy = 11;
 		c.anchor = GridBagConstraints.LINE_START;
 		add(textJourValid,c);
 		c.gridx = 1;
-		c.gridy = 10;
+		c.gridy = 11;
 		c.anchor = GridBagConstraints.CENTER;
 		add(textMoisValid,c);
 		c.gridx = 1;
-		c.gridy = 10;
+		c.gridy = 11;
 		c.anchor = GridBagConstraints.LINE_END;
 		add(textAnneeValid,c);
 		//Bouton
 		c.gridx = 1;
-		c.gridy = 11;
+		c.gridy = 12;
 		c.anchor = GridBagConstraints.LINE_START;
 		add(boutEnvoi,c);
 		
@@ -208,7 +214,6 @@ public class FormInstall extends JPanel {
 		
 		GestioBoutEnvoi EnvoiEvent = new GestioBoutEnvoi();
 		boutEnvoi.addActionListener(EnvoiEvent);
-		
 		
 		
 	}
@@ -282,22 +287,15 @@ public class FormInstall extends JPanel {
 								int option = JOptionPane.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 								if(option == JOptionPane.OK_OPTION) {
 									sendDataInDB();
-									FenetreParent.getCont().removeAll();
-									FenetreParent.getCont().add(new FormInstall(FenetreParent));
-									FenetreParent.getCont().repaint();
-									FenetreParent.getCont().revalidate();									
+								
 								}
 							}
 						}else {
 							//Boite de dialogue "êtes vous sur"
-							JOptionPane jopOuiNon = new JOptionPane();
-							int option = jopOuiNon.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+							int option = JOptionPane.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 							if(option == JOptionPane.OK_OPTION) {								
 								sendDataInDB();
-								FenetreParent.getCont().removeAll();
-								FenetreParent.getCont().add(new FormInstall(FenetreParent));
-								FenetreParent.getCont().repaint();
-								FenetreParent.getCont().revalidate();	
+		
 							}
 						}
 					}
@@ -348,7 +346,7 @@ public class FormInstall extends JPanel {
 		return sqlD;
 	}
 	
-	//Methode verification Numéro de référence
+	//Methode verification Durée Installation
 	private boolean verifDureeInstall (JTextField field) {
 		boolean verif = false;
 		try {
@@ -524,11 +522,27 @@ public class FormInstall extends JPanel {
 			prepStat.setString(10, getCodeAdmin());
 			prepStat.setString(11, getCodeOS());
 			
-			System.out.println("lignes modifiées : "+prepStat.executeUpdate());
-		}catch(SQLException e) {
+			//System.out.println("lignes modifiées : "+prepStat.executeUpdate());
 			
+			//reset des Insformations 
+			if(prepStat.executeUpdate() > 0) {
+				textIdInstall.setText(String.valueOf(getIdInstallBD()));
+				textJour.setText("Jour");
+				textMois.setText("Mois");
+				textAnnee.setText("Annee");		
+				textDureeInstall.setText("");
+				textCommentaire.setText("");
+				textRefProcedure.setText("");
+				textJourValid.setText("Jour");
+				textMoisValid.setText("Mois");
+				textAnneeValid.setText("Année");
+			
+				boutValid1.setSelected(true);
+				boutInstall1.setSelected(true);
+			}
+		}catch(SQLException e) {
+			e.getMessage();
 		}
-		
 		
 		
 	}

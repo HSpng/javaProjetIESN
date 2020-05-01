@@ -11,11 +11,10 @@ import accessBD.AccessBDGen;
 public class FenetrePrincipal extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private JMenuBar barreMenu;
-    private JMenu menuModif, menuAfficher, listSoft;
-    private JMenuItem newInstall, listInstall, suprInstall, softFamille, softInstall;
+    private JMenu menuModif, menuAfficher, listSoft, menuTable;
+    private JMenuItem newInstall, listInstall, suprInstall, softFamille, softInstall, listTous;
     private Container cont;
     private JLabel message;
-    private FormInstall formulaireInstall;
     
     public FenetrePrincipal() {
     	super("Programme Installation"); 
@@ -25,30 +24,34 @@ public class FenetrePrincipal extends JFrame{
     	setLocationRelativeTo(null);
     	
     	message = new JLabel("Bienvenue, veuillez utiliser le menu ci-dessus pour utiliser ce programme.");
-    	message.setVerticalAlignment(SwingConstants.CENTER);
     	message.setHorizontalAlignment(SwingConstants.CENTER);
-    	message.setFont(new Font("Calibri", Font.PLAIN, 19));
+    	message.setFont(new Font("Calibri", Font.PLAIN, 22));
     	
     	barreMenu = new JMenuBar();
     	setJMenuBar(barreMenu);
     	menuModif = new JMenu("Modifications");
     	listSoft = new JMenu("Software");
     	menuAfficher = new JMenu("Afficher");
+    	menuTable = new JMenu("Table");
     	
     	newInstall = new JMenuItem("Nouvelle Installation");
     	listInstall = new JMenuItem("Installations");
+    	listTous = new JMenuItem("Toutes les tables");
     	suprInstall = new JMenuItem("Supprimer Installation");
     	softFamille = new JMenuItem("Famille de software");
     	softInstall = new JMenuItem("Installation par Section");
+    	
     	
     	listSoft.add(softFamille);
     	listSoft.add(softInstall);
     	menuModif.add(newInstall);
     	menuModif.addSeparator();
     	menuModif.add(suprInstall);
-    	menuAfficher.add(listInstall);
+    	menuAfficher.add(menuTable);
     	menuAfficher.addSeparator();
     	menuAfficher.add(listSoft);
+    	menuTable.add(listTous);
+    	menuTable.add(listInstall);
     	
     	barreMenu.add(menuModif);
     	barreMenu.add(menuAfficher);
@@ -57,19 +60,28 @@ public class FenetrePrincipal extends JFrame{
     	cont.add(message);
     	setVisible(true);
     	
-    	formulaireInstall = new FormInstall(this);
-    	
     	//Evenenment menu nouveau formulaire
     	newInstall.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) { 			
     			cont.removeAll();
-    			
-				cont.add(formulaireInstall);
+				cont.add(new FormInstall());
 				cont.repaint();
 				cont.revalidate();
-				cont.setLayout(new FlowLayout());    			 			
+				//cont.setLayout(new FlowLayout());
     		}
-    	});   	
+    	});
+    	
+    	listInstall.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) { 			
+    			cont.removeAll();
+				cont.add(new PanAffichInstall());
+				cont.repaint();
+				cont.revalidate();
+				//cont.setLayout(new FlowLayout());		
+    		}
+    	});
+    	
+    	
     }
 
 	public static Connection getConnection() {
