@@ -83,11 +83,11 @@ public class FormInstall extends JPanel {
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(5, 5, 5, 5);
-		c.gridx = 1;
+		/*c.gridx = 1;
 		c.gridy = 0;
 		c.gridwidth = 2;
 		c.anchor = GridBagConstraints.LINE_START;
-		add(titreLab,c);
+		add(titreLab,c);*/
 		//ligne 1
 		c.gridx = 0;
 		c.gridy = 1;
@@ -483,7 +483,7 @@ public class FormInstall extends JPanel {
 
 		int id = getIdInstallBD();
 		java.sql.Date dateInstall = getDate(textJour,textMois,textAnnee);	
-		String commentaire = textCommentaire.getText();
+		String commentaire = textCommentaire.getText();		
 		int dureeInstall = Integer.parseInt(textDureeInstall.getText());
 		boolean typeInstall = boutInstall1.isSelected();	
 		String refProcedure = textRefProcedure.getText();	
@@ -501,13 +501,13 @@ public class FormInstall extends JPanel {
 			prepStat.setInt(1, id);
 			prepStat.setDate(2, dateInstall);
 			prepStat.setBoolean(3, typeInstall);
-			if(commentaire == "") {
+			if(commentaire.isEmpty()) {
 				prepStat.setNull(4, Types.VARCHAR);
 			}else {
 				prepStat.setString(4, commentaire);
 			}
 			prepStat.setInt(5, dureeInstall);
-			if(refProcedure == "") {
+			if(refProcedure.isEmpty()) {
 				prepStat.setNull(6, Types.INTEGER);
 			}else {
 				prepStat.setString(6,refProcedure);
