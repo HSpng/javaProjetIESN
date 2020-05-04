@@ -15,6 +15,7 @@ public class FenetrePrincipal extends JFrame{
     private JMenuItem newInstall, listInstall, suprInstall, softFamille, softInstall, listTous;
     private Container cont;
     private JLabel message;
+    private JScrollPane scrollpane;
     
     public FenetrePrincipal() {
     	super("Programme Installation"); 
@@ -75,6 +76,19 @@ public class FenetrePrincipal extends JFrame{
     		public void actionPerformed(ActionEvent e) { 			
     			cont.removeAll();
 				cont.add(new PanAffichInstall());
+				cont.repaint();
+				cont.revalidate();
+				//cont.setLayout(new FlowLayout());		
+    		}
+    	});
+    	
+    	listTous.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) { 			
+    			cont.removeAll();
+    			PanAffichTous panTous = new PanAffichTous();
+    			JScrollPane scrollpane = new JScrollPane(panTous );
+    			//scrollpane.setPreferredSize(panTous.get);
+				cont.add(scrollpane);
 				cont.repaint();
 				cont.revalidate();
 				//cont.setLayout(new FlowLayout());		
