@@ -10,7 +10,7 @@ import accessBD.AccessBDGen;
 public class FenetrePrincipal extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private JMenuBar barreMenu;
-    private JMenu menuModif, menuAfficher, listSoft, menuTable;
+    private JMenu menuModif, menuAfficher, menuRecherche;
     private JMenuItem newInstall, listInstall, suprInstall, softFamille, softInstall, listTous;
     private Container cont;
     private JPanel panPrincipal, panConnection;
@@ -25,6 +25,7 @@ public class FenetrePrincipal extends JFrame{
     	setSize(800,500);
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	setLocationRelativeTo(null);
+    	setResizable(false);
     	panPrincipal = new JPanel();
     	
     	message = new JLabel("Bienvenue, veuillez vous connectez à la base de données pour utiliser ce programme.");
@@ -38,9 +39,8 @@ public class FenetrePrincipal extends JFrame{
     	setJMenuBar(barreMenu);
     	
     	menuModif = new JMenu("Modifications");
-    	listSoft = new JMenu("Software");
     	menuAfficher = new JMenu("Afficher");
-    	menuTable = new JMenu("Table");
+    	menuRecherche = new JMenu("Recherche");
     	
     	newInstall = new JMenuItem("Nouvelle Installation");
     	listInstall = new JMenuItem("Installations");
@@ -49,29 +49,22 @@ public class FenetrePrincipal extends JFrame{
     	softFamille = new JMenuItem("Famille de software");
     	softInstall = new JMenuItem("Installation par Section");
     	
-    	
-    	listSoft.add(softFamille);
-    	listSoft.add(softInstall);
     	menuModif.add(newInstall);
     	menuModif.addSeparator();
     	menuModif.add(suprInstall);
-    	menuAfficher.add(menuTable);
+    	menuAfficher.add(listInstall);
     	menuAfficher.addSeparator();
-    	menuAfficher.add(listSoft);
-    	menuTable.add(listTous);
-    	menuTable.add(listInstall);
+    	menuAfficher.add(listTous);
+    	menuRecherche.add(softFamille);
+    	menuRecherche.addSeparator();
+    	menuRecherche.add(softInstall);
     	
     	barreMenu.add(menuModif);
     	barreMenu.add(menuAfficher);
+    	barreMenu.add(menuRecherche);
     	//menuModif.setEnabled(false);
     	//menuAfficher.setEnabled(false);
-    	
-    	menuModif.setEnabled(true);
-    	menuAfficher.setEnabled(true);
-    	
-    	Box box = Box.createVerticalBox();
-    	box.add(message);
-    	box.add(boutConnect);
+    	//menuRecherche.setEnabled(false);
     	
     	panPrincipal.setLayout(new GridBagLayout());
     	GridBagConstraints c = new GridBagConstraints();
@@ -83,7 +76,7 @@ public class FenetrePrincipal extends JFrame{
     	cont = getContentPane();
     	cont.setLayout(new BorderLayout());
     	cont.add(panPrincipal, BorderLayout.CENTER);
-    	setVisible(true);
+    	
     	
     	//Création du panneau de connexion
     	panConnection = new JPanel();
@@ -110,6 +103,8 @@ public class FenetrePrincipal extends JFrame{
 						JOptionPane.showMessageDialog(null, "Connecté !", "Réussi", JOptionPane.INFORMATION_MESSAGE);
 						menuModif.setEnabled(true);
 				    	menuAfficher.setEnabled(true);
+				    	menuRecherche.setEnabled(true);
+				    	boutConnect.setEnabled(false);
 					}
 					
 				}
@@ -123,10 +118,9 @@ public class FenetrePrincipal extends JFrame{
     			titre.setFont(new Font("Calibri", Font.PLAIN, 17));
     			titre.setHorizontalAlignment(SwingConstants.CENTER);
     			cont.add(titre, BorderLayout.NORTH);
-				cont.add(new FormInstall(), BorderLayout.CENTER);
+				cont.add(new FormInstall(getFen()), BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
-				
     		}
     	});
     	
@@ -136,7 +130,6 @@ public class FenetrePrincipal extends JFrame{
 				cont.add(new PanAffichInstall());
 				cont.repaint();
 				cont.revalidate();
-				//cont.setLayout(new FlowLayout());		
     		}
     	});
     	
@@ -144,14 +137,32 @@ public class FenetrePrincipal extends JFrame{
     		public void actionPerformed(ActionEvent e) { 			
     			cont.removeAll();
     			JScrollPane scrollpane = new JScrollPane(new PanAffichTous());
-				cont.add(scrollpane);
+    			scrollpane.setBorder(null);
+				cont.add(scrollpane, BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
 	
     		}
     	});
     	
+    	suprInstall.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) { 			
+    			cont.removeAll();
+    			JLabel titre = new JLabel("Supprimer une installation");
+    			titre.setFont(new Font("Calibri", Font.PLAIN, 17));
+    			titre.setHorizontalAlignment(SwingConstants.CENTER);
+    			cont.add(titre, BorderLayout.NORTH);
+				cont.add(new PanSuprInstall(getFen()), BorderLayout.CENTER);
+				cont.repaint();
+				cont.revalidate();
+    		}
+    	});
     	
+    	setVisible(true);
+    }
+    
+    public FenetrePrincipal getFen() {
+    	return this;
     }
 
 	public static Connection getConnection() {

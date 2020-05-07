@@ -22,8 +22,11 @@ public class FormInstall extends JPanel {
 	private JRadioButton boutInstall1, boutInstall2, boutValid1, boutValid2, boutValid3;
 	private ButtonGroup groupBoutTypeInstall, groupBoutValid;
 	private JButton boutEnvoi;
+	private FenetrePrincipal parent;
 	
-	public FormInstall() {
+	public FormInstall(FenetrePrincipal fen) {
+		parent = fen;
+		
 		titreLab = new JLabel("Encoder une nouvelle installation");
 		titreLab.setFont(new Font("Calibri", Font.PLAIN, 17));
 		idInstall = new JLabel("ID installations: ");
@@ -82,7 +85,7 @@ public class FormInstall extends JPanel {
 	//Layout
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(5, 5, 5, 5);
+		c.insets = new Insets(7, 5, 5, 5);
 		/*c.gridx = 1;
 		c.gridy = 0;
 		c.gridwidth = 2;
@@ -154,40 +157,40 @@ public class FormInstall extends JPanel {
 		add(boutValid3,c);
 		//ligne 8
 		c.gridx = 0;
-		c.gridy = 8;
+		c.gridy = 9;
 		c.anchor = GridBagConstraints.LINE_START;
 		add(softLab,c);
 		c.gridx = 1;
-		c.gridy = 8;
+		c.gridy = 9;
 		add(comboSoft,c);
 		//ligne 9
 		c.gridx = 0;
-		c.gridy = 9;
+		c.gridy = 10;
 		add(osLab,c);
 		c.gridx = 1;
-		c.gridy = 9;
+		c.gridy = 10;
 		add(comboOS,c);
 		//ligne 10
 		c.gridx = 0;
-		c.gridy = 10;
+		c.gridy = 11;
 		add(reseauLab,c);
 		c.gridx = 1;
-		c.gridy = 10;
+		c.gridy = 11;
 		add(comboAdmin,c);
 		//ligne 11 (à prevoir)
 		c.gridx = 0;
-		c.gridy = 11;
+		c.gridy = 8;
 		add(dateValidation,c);
 		c.gridx = 1;
-		c.gridy = 11;
+		c.gridy = 8;
 		c.anchor = GridBagConstraints.LINE_START;
 		add(textJourValid,c);
 		c.gridx = 1;
-		c.gridy = 11;
+		c.gridy = 8;
 		c.anchor = GridBagConstraints.CENTER;
 		add(textMoisValid,c);
 		c.gridx = 1;
-		c.gridy = 11;
+		c.gridy = 8;
 		c.anchor = GridBagConstraints.LINE_END;
 		add(textAnneeValid,c);
 		//Bouton
@@ -258,7 +261,19 @@ public class FormInstall extends JPanel {
 		}
 
 		public void mouseReleased(MouseEvent e) {
-			
+			if(e.getSource() == textJour) {
+				textJour.setText("");
+			}else if(e.getSource() == textMois) {
+				textMois.setText("");
+			}else if(e.getSource() == textAnnee) {
+				textAnnee.setText("");
+			}else if(e.getSource() == textJourValid) {
+				textJourValid.setText("");
+			}else if(e.getSource() == textMoisValid) {
+				textMoisValid.setText("");
+			}else if(e.getSource() == textAnneeValid) {
+				textAnneeValid.setText("");
+			}
 		}
 
 		public void mouseEntered(MouseEvent e) {
@@ -362,24 +377,26 @@ public class FormInstall extends JPanel {
 	
 	//Methode pour récupérer l'id d'installation dans la DB et rajouter 1
 	private int getIdInstallBD() {
-		int compt;
+		int compt = 0;
 		try {
 			//connection à la DB récupérer par la Fenetre Principal
 			Connection connect = FenetrePrincipal.getConnection();
-			String sqlInstruction = "select IdInstallation from Installation";
+			String sqlInstruction = "select max(idInstallation) from Installation;";
 			ResultSet result = connect.createStatement().executeQuery(sqlInstruction);	//récupération des infos demandés dans une variable
-			
+			while(result.next()) {
+				compt = result.getInt(1);
+			}
+			compt += 1;
 			//on compte le nombre d'id et retourne le résultat + 1		
-			compt = 1;
+			/*compt = 1;
 			while(result.next()) {
 				compt++;
-			}		
+			}	*/	
 			
 			connect.close();		
 			
 		}catch(SQLException e) {
 			e.getMessage();
-			compt = 0;
 		}
 		return compt;
 	}
@@ -526,6 +543,11 @@ public class FormInstall extends JPanel {
 			
 			//reset des Insformations 
 			if(prepStat.executeUpdate() > 0) {
+				parent.getCont().removeAll();
+				parent.getCont().add(new FormInstall(parent));
+				parent.getCont().repaint();
+				parent.getCont().revalidate();
+				/*
 				textIdInstall.setText(String.valueOf(getIdInstallBD()));
 				textJour.setText("Jour");
 				textMois.setText("Mois");
@@ -539,6 +561,7 @@ public class FormInstall extends JPanel {
 			
 				boutValid1.setSelected(true);
 				boutInstall1.setSelected(true);
+				*/
 			}
 		}catch(SQLException e) {
 			e.getMessage();
