@@ -158,6 +158,19 @@ public class FenetrePrincipal extends JFrame{
     		}
     	});
     	
+    	softFamille.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) { 			
+    			cont.removeAll();
+    			//JLabel titre = new JLabel("Supprimer une installation");
+    			//titre.setFont(new Font("Calibri", Font.PLAIN, 17));
+    			//titre.setHorizontalAlignment(SwingConstants.CENTER);
+    			//cont.add(titre, BorderLayout.NORTH);
+				cont.add(new PanFamilleSoft(getFen()), BorderLayout.CENTER);
+				cont.repaint();
+				cont.revalidate();
+    		}
+    	});
+    	
     	setVisible(true);
     }
     
