@@ -46,7 +46,7 @@ public class FenetrePrincipal extends JFrame{
     	listInstall = new JMenuItem("Installations");
     	listTous = new JMenuItem("Toutes les tables");
     	suprInstall = new JMenuItem("Supprimer Installation");
-    	softFamille = new JMenuItem("Famille de software");
+    	softFamille = new JMenuItem("Software par Famille");
     	softInstall = new JMenuItem("Installation par Section");
     	
     	menuModif.add(newInstall);
@@ -114,10 +114,6 @@ public class FenetrePrincipal extends JFrame{
     	newInstall.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {	
     			cont.removeAll();
-    			JLabel titre = new JLabel("Encoder une nouvelle installation");
-    			titre.setFont(new Font("Calibri", Font.PLAIN, 17));
-    			titre.setHorizontalAlignment(SwingConstants.CENTER);
-    			cont.add(titre, BorderLayout.NORTH);
 				cont.add(new FormInstall(getFen()), BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
@@ -138,6 +134,7 @@ public class FenetrePrincipal extends JFrame{
     			cont.removeAll();
     			JScrollPane scrollpane = new JScrollPane(new PanAffichTous());
     			scrollpane.setBorder(null);
+    			scrollpane.getVerticalScrollBar().setUnitIncrement(20);
 				cont.add(scrollpane, BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
@@ -148,11 +145,7 @@ public class FenetrePrincipal extends JFrame{
     	suprInstall.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) { 			
     			cont.removeAll();
-    			JLabel titre = new JLabel("Supprimer une installation");
-    			titre.setFont(new Font("Calibri", Font.PLAIN, 17));
-    			titre.setHorizontalAlignment(SwingConstants.CENTER);
-    			cont.add(titre, BorderLayout.NORTH);
-				cont.add(new PanSuprInstall(getFen()), BorderLayout.CENTER);
+				cont.add(new PanSuprInstall(), BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
     		}
@@ -161,10 +154,6 @@ public class FenetrePrincipal extends JFrame{
     	softFamille.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) { 			
     			cont.removeAll();
-    			//JLabel titre = new JLabel("Supprimer une installation");
-    			//titre.setFont(new Font("Calibri", Font.PLAIN, 17));
-    			//titre.setHorizontalAlignment(SwingConstants.CENTER);
-    			//cont.add(titre, BorderLayout.NORTH);
 				cont.add(new PanFamilleSoft(getFen()), BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();

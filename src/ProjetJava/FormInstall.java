@@ -23,9 +23,11 @@ public class FormInstall extends JPanel {
 	private ButtonGroup groupBoutTypeInstall, groupBoutValid;
 	private JButton boutEnvoi;
 	private FenetrePrincipal parent;
+	private JPanel formPan;
 	
 	public FormInstall(FenetrePrincipal fen) {
 		parent = fen;
+		formPan = new JPanel();
 		
 		titreLab = new JLabel("Encoder une nouvelle installation");
 		titreLab.setFont(new Font("Calibri", Font.PLAIN, 17));
@@ -83,7 +85,7 @@ public class FormInstall extends JPanel {
 		boutEnvoi =new JButton("Terminer");
 		
 	//Layout
-		setLayout(new GridBagLayout());
+		formPan.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(7, 5, 5, 5);
 		/*c.gridx = 1;
@@ -96,110 +98,116 @@ public class FormInstall extends JPanel {
 		c.gridy = 1;
 		c.gridwidth = 1;
 		c.anchor = GridBagConstraints.LINE_START;
-		add(idInstall,c);
+		formPan.add(idInstall,c);
 		c.gridx = 1;
 		c.gridy = 1;
-		add(textIdInstall,c);
+		formPan.add(textIdInstall,c);
 		//ligne 2
 		c.gridx = 0;
 		c.gridy = 2;
-		add(date,c);
+		formPan.add(date,c);
 		c.gridx = 1;
 		c.gridy = 2;
 		c.anchor = GridBagConstraints.LINE_START;
-		add(textJour,c);
+		formPan.add(textJour,c);
 		c.gridx = 1;
 		c.gridy = 2;
 		c.anchor = GridBagConstraints.CENTER;
-		add(textMois,c);
+		formPan.add(textMois,c);
 		c.gridx = 1;
 		c.gridy = 2;
 		c.anchor = GridBagConstraints.LINE_END;
-		add(textAnnee,c);
+		formPan.add(textAnnee,c);
 		//ligne 3
 		c.gridx = 0;
 		c.gridy = 3;
 		c.anchor = GridBagConstraints.LINE_START;
-		add(boutInstall1,c);
+		formPan.add(boutInstall1,c);
 		c.gridx = 1;
 		c.gridy = 3;
-		add(boutInstall2,c);
+		formPan.add(boutInstall2,c);
 		//ligne 4
 		c.gridx = 0;
 		c.gridy = 4;
-		add(commentaire,c);
+		formPan.add(commentaire,c);
 		c.gridwidth = 2;
 		c.gridx = 1;
-		add(textCommentaire, c);
+		formPan.add(textCommentaire, c);
 		//ligne 5
 		c.gridx = 0;
 		c.gridy = 5;
 		c.gridwidth = 1;
-		add(dureeInstall,c);
+		formPan.add(dureeInstall,c);
 		c.gridx = 1;
-		add(textDureeInstall,c);
+		formPan.add(textDureeInstall,c);
 		//ligne 6
 		c.gridx = 0;
 		c.gridy = 6;
-		add(refProcedure,c);
+		formPan.add(refProcedure,c);
 		c.gridx = 1;
 		c.gridwidth = 2;
-		add(textRefProcedure,c);
+		formPan.add(textRefProcedure,c);
 		//ligne 7
 		c.gridx = 0;
 		c.gridy = 7;
 		c.gridwidth = 1;
-		add(boutValid1,c);
+		formPan.add(boutValid1,c);
 		c.gridx = 1;
-		add(boutValid2,c);
+		formPan.add(boutValid2,c);
 		c.gridx = 2;
 		c.anchor = GridBagConstraints.LINE_START;
-		add(boutValid3,c);
+		formPan.add(boutValid3,c);
 		//ligne 8
 		c.gridx = 0;
 		c.gridy = 9;
 		c.anchor = GridBagConstraints.LINE_START;
-		add(softLab,c);
+		formPan.add(softLab,c);
 		c.gridx = 1;
 		c.gridy = 9;
-		add(comboSoft,c);
+		formPan.add(comboSoft,c);
 		//ligne 9
 		c.gridx = 0;
 		c.gridy = 10;
-		add(osLab,c);
+		formPan.add(osLab,c);
 		c.gridx = 1;
 		c.gridy = 10;
-		add(comboOS,c);
+		formPan.add(comboOS,c);
 		//ligne 10
 		c.gridx = 0;
 		c.gridy = 11;
-		add(reseauLab,c);
+		formPan.add(reseauLab,c);
 		c.gridx = 1;
 		c.gridy = 11;
-		add(comboAdmin,c);
+		formPan.add(comboAdmin,c);
 		//ligne 11 (à prevoir)
 		c.gridx = 0;
 		c.gridy = 8;
-		add(dateValidation,c);
+		formPan.add(dateValidation,c);
 		c.gridx = 1;
 		c.gridy = 8;
 		c.anchor = GridBagConstraints.LINE_START;
-		add(textJourValid,c);
+		formPan.add(textJourValid,c);
 		c.gridx = 1;
 		c.gridy = 8;
 		c.anchor = GridBagConstraints.CENTER;
-		add(textMoisValid,c);
+		formPan.add(textMoisValid,c);
 		c.gridx = 1;
 		c.gridy = 8;
 		c.anchor = GridBagConstraints.LINE_END;
-		add(textAnneeValid,c);
+		formPan.add(textAnneeValid,c);
 		//Bouton
 		c.gridx = 1;
 		c.gridy = 12;
 		c.anchor = GridBagConstraints.LINE_START;
-		add(boutEnvoi,c);
+		formPan.add(boutEnvoi,c);
 		
+		JLabel titre = new JLabel("Encoder une nouvelle installation");
+		titre.setFont(new Font("Calibri", Font.PLAIN, 17));
+		titre.setHorizontalAlignment(SwingConstants.CENTER);
 		
+		setLayout(new BorderLayout());
+		add(formPan, BorderLayout.CENTER);
+		add(titre, BorderLayout.NORTH);
 		
 	//Gestionnaire d'action
 		GestioAprevoir gestPrevoir = new GestioAprevoir();

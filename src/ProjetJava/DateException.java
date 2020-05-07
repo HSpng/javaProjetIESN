@@ -1,6 +1,7 @@
 package ProjetJava;
 
 public class DateException extends Exception{
+	private static final long serialVersionUID = 1L;
 	private int jour, mois, annee;
 	
 	public DateException(int jour, int mois, int annee) {
