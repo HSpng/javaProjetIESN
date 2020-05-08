@@ -18,6 +18,7 @@ public class FenetrePrincipal extends JFrame{
     private static JTextField userText;
     private static JPasswordField passText;
     private JButton boutConnect;
+    private Connection connect;
     
     public FenetrePrincipal() {
     	super("Programme Installation"); 
@@ -91,87 +92,73 @@ public class FenetrePrincipal extends JFrame{
     	panConnection.add(passText);
     	panConnection.setLayout(new GridLayout(2,2,4,4));
     	
-    	//Evenenment menu nouveau formulaire
+    	setVisible(true);
     	
-    	boutConnect.addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {
-    		    int option = JOptionPane.showConfirmDialog(null, panConnection,"Entrez Vos identifiants",JOptionPane.OK_CANCEL_OPTION);
-    		    if(option == JOptionPane.OK_OPTION) {
-					if(getConnection() == null) {
-						JOptionPane.showMessageDialog(null, "Identifiants Invalide", "Erreur", JOptionPane.ERROR_MESSAGE);
-					}else {
-						JOptionPane.showMessageDialog(null, "Connecté !", "Réussi", JOptionPane.INFORMATION_MESSAGE);
-						menuModif.setEnabled(true);
-				    	menuAfficher.setEnabled(true);
-				    	menuRecherche.setEnabled(true);
-				    	boutConnect.setEnabled(false);
-					}
-					
-				}
-    		}
-    	});
-    	
-    	newInstall.addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) {	
+    	GestioActionMenu actionMenu = new GestioActionMenu();
+    	newInstall.addActionListener(actionMenu);
+    	listInstall.addActionListener(actionMenu);
+    	listTous.addActionListener(actionMenu);
+    	suprInstall.addActionListener(actionMenu);
+    	softFamille.addActionListener(actionMenu);
+    	boutConnect.addActionListener(actionMenu);
+    }
+    
+    private class GestioActionMenu implements ActionListener{
+    	public void actionPerformed(ActionEvent e) {
+    		if(e.getSource() == newInstall) {
     			cont.removeAll();
-				cont.add(new FormInstall(getFen()), BorderLayout.CENTER);
+				cont.add(new PanFormInstall(getFen()), BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
-    		}
-    	});
-    	
-    	listInstall.addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) { 			
+    		}else if(e.getSource() == listInstall) {
     			cont.removeAll();
-				cont.add(new PanAffichInstall());
+				cont.add(new PanAffichInstall(getFen()));
 				cont.repaint();
 				cont.revalidate();
-    		}
-    	});
-    	
-    	listTous.addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) { 			
+    		}else if(e.getSource() == listTous) {
     			cont.removeAll();
-    			JScrollPane scrollpane = new JScrollPane(new PanAffichTous());
+    			JScrollPane scrollpane = new JScrollPane(new PanAffichTous(getFen()));
     			scrollpane.setBorder(null);
     			scrollpane.getVerticalScrollBar().setUnitIncrement(20);
 				cont.add(scrollpane, BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
-	
-    		}
-    	});
-    	
-    	suprInstall.addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) { 			
+    		}else if(e.getSource() == suprInstall) {
     			cont.removeAll();
-				cont.add(new PanSuprInstall(), BorderLayout.CENTER);
+				cont.add(new PanSuprInstall(getFen()), BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
-    		}
-    	});
-    	
-    	softFamille.addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent e) { 			
+    		}else if(e.getSource() == softFamille) {
     			cont.removeAll();
 				cont.add(new PanFamilleSoft(getFen()), BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
+    		}else if(e.getSource() == boutConnect) {
+    			 int option = JOptionPane.showConfirmDialog(null, panConnection,"Entrez Vos identifiants",JOptionPane.OK_CANCEL_OPTION);
+     		    if(option == JOptionPane.OK_OPTION) {
+ 					if(getConnection() == null) {
+ 						JOptionPane.showMessageDialog(null, "Identifiants Invalide", "Erreur", JOptionPane.ERROR_MESSAGE);
+ 					}else {
+ 						JOptionPane.showMessageDialog(null, "Connecté !", "Réussi", JOptionPane.INFORMATION_MESSAGE);
+ 						menuModif.setEnabled(true);
+ 				    	menuAfficher.setEnabled(true);
+ 				    	menuRecherche.setEnabled(true);
+ 				    	boutConnect.setEnabled(false);
+ 					}	
+ 				}
     		}
-    	});
-    	
-    	setVisible(true);
+    	}
     }
     
     public FenetrePrincipal getFen() {
     	return this;
     }
 
-	public static Connection getConnection() {
-    	Connection connect = null;
+	public Connection getConnection() {
+    	connect = null;
     	try {
     		//connect = AccessBDGen.connecter("DbInstallations", userText.getText(), new String(passText.getPassword()));
-    		connect = AccessBDGen.connecter("DbInstallations", "root", "Tigrou007=");
+    		connect = AccessBDGen.connecter("DbInstallations", "root", "Tigrou007=");	
     	}catch(SQLException ex) {
     		ex.getMessage();
     	}

@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class FormInstall extends JPanel {
+public class PanFormInstall extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JLabel idInstall, date, commentaire, dureeInstall, refProcedure, dateValidation, softLab, osLab, reseauLab, titreLab;
 	private JTextField textIdInstall, textJour, textMois, textAnnee, textCommentaire, textDureeInstall, textRefProcedure, textJourValid, textMoisValid, textAnneeValid;
@@ -25,7 +25,7 @@ public class FormInstall extends JPanel {
 	private FenetrePrincipal parent;
 	private JPanel formPan;
 	
-	public FormInstall(FenetrePrincipal fen) {
+	public PanFormInstall(FenetrePrincipal fen) {
 		parent = fen;
 		formPan = new JPanel();
 		
@@ -388,7 +388,7 @@ public class FormInstall extends JPanel {
 		int compt = 0;
 		try {
 			//connection à la DB récupérer par la Fenetre Principal
-			Connection connect = FenetrePrincipal.getConnection();
+			Connection connect = parent.getConnection();
 			String sqlInstruction = "select max(idInstallation) from Installation;";
 			ResultSet result = connect.createStatement().executeQuery(sqlInstruction);	//récupération des infos demandés dans une variable
 			while(result.next()) {
@@ -412,7 +412,7 @@ public class FormInstall extends JPanel {
 	//Methode pour retourner les valeur des comboBos OS, admin et software 
 	private Object[] getCombo(String type) {
 		Object[] tabCombo = null;
-		Connection connect = FenetrePrincipal.getConnection();
+		Connection connect = parent.getConnection();
 		String sqlInstruction;
 		PreparedStatement result;
 		try {
@@ -438,7 +438,7 @@ public class FormInstall extends JPanel {
 	}
 	
 	private String getCodeOS() {		//Méthode pour recupérer le CodesOS de la DB à partir du nom de l'OS
-		Connection connect = FenetrePrincipal.getConnection();
+		Connection connect = parent.getConnection();
 		String codeOS = null;
 		try {
 			String os = String.valueOf(comboOS.getSelectedItem());
@@ -459,7 +459,7 @@ public class FormInstall extends JPanel {
 	}
 	
 	private String getCodeSoft() {		//Méthode pour recupérer le CodesSoftware de la DB à partir du nom du Software
-		Connection connect = FenetrePrincipal.getConnection();
+		Connection connect = parent.getConnection();
 		String codeSoft = null;
 		try {
 			String soft = String.valueOf(comboSoft.getSelectedItem());
@@ -480,7 +480,7 @@ public class FormInstall extends JPanel {
 	}
 	
 	private String getCodeAdmin() {
-		Connection connect = FenetrePrincipal.getConnection();
+		Connection connect = parent.getConnection();
 		String codeAdmin = null;
 		try {
 			String admin = String.valueOf(comboAdmin.getSelectedItem());
@@ -504,7 +504,7 @@ public class FormInstall extends JPanel {
 	private void sendDataInDB() {
 		java.sql.Date dateValidation = null;
 		
-		Connection connect = FenetrePrincipal.getConnection();
+		Connection connect = parent.getConnection();
 
 		int id = getIdInstallBD();
 		java.sql.Date dateInstall = getDate(textJour,textMois,textAnnee);	
@@ -552,24 +552,9 @@ public class FormInstall extends JPanel {
 			//reset des Insformations 
 			if(prepStat.executeUpdate() > 0) {
 				parent.getCont().removeAll();
-				parent.getCont().add(new FormInstall(parent));
+				parent.getCont().add(new PanFormInstall(parent));
 				parent.getCont().repaint();
 				parent.getCont().revalidate();
-				/*
-				textIdInstall.setText(String.valueOf(getIdInstallBD()));
-				textJour.setText("Jour");
-				textMois.setText("Mois");
-				textAnnee.setText("Annee");		
-				textDureeInstall.setText("");
-				textCommentaire.setText("");
-				textRefProcedure.setText("");
-				textJourValid.setText("Jour");
-				textMoisValid.setText("Mois");
-				textAnneeValid.setText("Année");
-			
-				boutValid1.setSelected(true);
-				boutInstall1.setSelected(true);
-				*/
 			}
 		}catch(SQLException e) {
 			e.getMessage();
