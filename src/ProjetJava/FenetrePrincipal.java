@@ -11,7 +11,7 @@ public class FenetrePrincipal extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private JMenuBar barreMenu;
     private JMenu menuModif, menuAfficher, menuRecherche;
-    private JMenuItem newInstall, listInstall, suprInstall, softFamille, softInstall, listTous;
+    private JMenuItem newInstall, listInstall, suprInstall, listSoftFamille, listSectionInstall, listTous;
     private Container cont;
     private JPanel panPrincipal, panConnection;
     private JLabel message, userLab, passLab;
@@ -47,8 +47,8 @@ public class FenetrePrincipal extends JFrame{
     	listInstall = new JMenuItem("Installations");
     	listTous = new JMenuItem("Toutes les tables");
     	suprInstall = new JMenuItem("Supprimer Installation");
-    	softFamille = new JMenuItem("Software par Famille");
-    	softInstall = new JMenuItem("Installation par Section");
+    	listSoftFamille = new JMenuItem("Software par Famille");
+    	listSectionInstall = new JMenuItem("Installation par Section");
     	
     	menuModif.add(newInstall);
     	menuModif.addSeparator();
@@ -56,9 +56,9 @@ public class FenetrePrincipal extends JFrame{
     	menuAfficher.add(listInstall);
     	menuAfficher.addSeparator();
     	menuAfficher.add(listTous);
-    	menuRecherche.add(softFamille);
+    	menuRecherche.add(listSoftFamille);
     	menuRecherche.addSeparator();
-    	menuRecherche.add(softInstall);
+    	menuRecherche.add(listSectionInstall);
     	
     	barreMenu.add(menuModif);
     	barreMenu.add(menuAfficher);
@@ -99,7 +99,8 @@ public class FenetrePrincipal extends JFrame{
     	listInstall.addActionListener(actionMenu);
     	listTous.addActionListener(actionMenu);
     	suprInstall.addActionListener(actionMenu);
-    	softFamille.addActionListener(actionMenu);
+    	listSoftFamille.addActionListener(actionMenu);
+    	listSectionInstall.addActionListener(actionMenu);
     	boutConnect.addActionListener(actionMenu);
     }
     
@@ -128,9 +129,14 @@ public class FenetrePrincipal extends JFrame{
 				cont.add(new PanSuprInstall(getFen()), BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
-    		}else if(e.getSource() == softFamille) {
+    		}else if(e.getSource() == listSoftFamille) {
     			cont.removeAll();
 				cont.add(new PanFamilleSoft(getFen()), BorderLayout.CENTER);
+				cont.repaint();
+				cont.revalidate();
+    		}else if(e.getSource() == listSectionInstall) {
+    			cont.removeAll();
+				cont.add(new PanSectionInstall(getFen()), BorderLayout.CENTER);
 				cont.repaint();
 				cont.revalidate();
     		}else if(e.getSource() == boutConnect) {
