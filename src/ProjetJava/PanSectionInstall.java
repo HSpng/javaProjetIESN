@@ -25,6 +25,7 @@ import accessBD.AccessBDGen;
 import accessBD.TableModelGen;
 
 public class PanSectionInstall extends JPanel{
+	private static final long serialVersionUID = 1L;
 	private FenetrePrincipal parent;
 	private Object[] SectionTab;
 	private JButton okBout, retourBout;

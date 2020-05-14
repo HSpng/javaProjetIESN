@@ -16,18 +16,20 @@ import java.sql.SQLException;
 
 public class PanFormInstall extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private JLabel idInstall, date, commentaire, dureeInstall, refProcedure, dateValidation, softLab, osLab, reseauLab, titreLab;
+	private static final String GrigBagConstraints = null;
+	private JLabel idInstall, date, commentaire, dureeInstall, refProcedure, dateValidation, softLab, osLab, reseauLab, titreLab, facultatifLab;
 	private JTextField textIdInstall, textJour, textMois, textAnnee, textCommentaire, textDureeInstall, textRefProcedure, textJourValid, textMoisValid, textAnneeValid;
 	private JComboBox<Object> comboSoft, comboOS, comboAdmin;
 	private JRadioButton boutInstall1, boutInstall2, boutValid1, boutValid2, boutValid3;
 	private ButtonGroup groupBoutTypeInstall, groupBoutValid;
-	private JButton boutEnvoi;
+	private JButton boutEnvoi, boutAnnuler;
 	private FenetrePrincipal parent;
 	private JPanel formPan;
 	
 	public PanFormInstall(FenetrePrincipal fen) {
 		parent = fen;
 		formPan = new JPanel();
+		facultatifLab = new JLabel("f = facultatif");
 		
 		titreLab = new JLabel("Encoder une nouvelle installation");
 		titreLab.setFont(new Font("Calibri", Font.PLAIN, 17));
@@ -82,7 +84,8 @@ public class PanFormInstall extends JPanel {
 		comboOS = new JComboBox<Object>(getCombo( "OS"));
 		osLab = new JLabel("OS: ");
 		
-		boutEnvoi =new JButton("Terminer");
+		boutEnvoi = new JButton("Terminer");
+		boutAnnuler = new JButton("Annuler");
 		
 	//Layout
 		formPan.setLayout(new GridBagLayout());
@@ -200,6 +203,11 @@ public class PanFormInstall extends JPanel {
 		c.gridy = 12;
 		c.anchor = GridBagConstraints.LINE_START;
 		formPan.add(boutEnvoi,c);
+		c.anchor = GridBagConstraints.LINE_END;
+		formPan.add(boutAnnuler,c);
+		c.gridx = 2;
+		c.anchor = GridBagConstraints.LINE_END;
+		formPan.add(facultatifLab, c);
 		
 		JLabel titre = new JLabel("Encoder une nouvelle installation");
 		titre.setFont(new Font("Calibri", Font.PLAIN, 17));
@@ -225,6 +233,7 @@ public class PanFormInstall extends JPanel {
 		
 		GestioBoutEnvoi EnvoiEvent = new GestioBoutEnvoi();
 		boutEnvoi.addActionListener(EnvoiEvent);
+		boutAnnuler.addActionListener(EnvoiEvent);
 		
 		
 	}
@@ -296,37 +305,42 @@ public class PanFormInstall extends JPanel {
 	//Evenement bouton terminer
 	private class GestioBoutEnvoi implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-				
-		//verification Date de l'installation
-			try {
-				if(verifDate(textJour,textMois,textAnnee)) {
-					
-					if(verifDureeInstall (textDureeInstall)) {
-				//verification Date de validation + si le bouton à prevoir est coché
-						if(boutValid3.isSelected() == true ) {
-							if(verifDate(textJourValid, textMoisValid, textAnneeValid)) {
-							
+			if(e.getSource() == boutEnvoi) {
+				//verification Date de l'installation
+				try {
+					if(verifDate(textJour,textMois,textAnnee)) {				
+						if(verifDureeInstall (textDureeInstall)) {
+						//verification Date de validation + si le bouton à prevoir est coché
+							if(boutValid3.isSelected() == true ) {
+								if(verifDate(textJourValid, textMoisValid, textAnneeValid)) {						
+									//Boite de dialogue "êtes vous sur"
+									int option = JOptionPane.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+									if(option == JOptionPane.OK_OPTION) {
+										sendDataInDB();					
+									}
+								}
+							}else {
 								//Boite de dialogue "êtes vous sur"
 								int option = JOptionPane.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-								if(option == JOptionPane.OK_OPTION) {
+								if(option == JOptionPane.OK_OPTION) {								
 									sendDataInDB();
-								
 								}
-							}
-						}else {
-							//Boite de dialogue "êtes vous sur"
-							int option = JOptionPane.showConfirmDialog(null,"Voulez-vous envoyer ces informations ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-							if(option == JOptionPane.OK_OPTION) {								
-								sendDataInDB();
-		
 							}
 						}
 					}
+				} catch (DateException e1) {
+					//Boite de dialogue si la date n'est pas bonne 
+					JOptionPane.showMessageDialog(null, e1.toString(), "Erreur", JOptionPane.ERROR_MESSAGE);
 				}
-			} catch (DateException e1) {
-				//Boite de dialogue si la date n'est pas bonne 
-				JOptionPane.showMessageDialog(null, e1.toString(), "Erreur", JOptionPane.ERROR_MESSAGE);
-			}	
+			}else if(e.getSource() == boutAnnuler) {
+				int option = JOptionPane.showConfirmDialog(null,"Voulez-vous annuler et recommencer ?","Attention", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if(option == JOptionPane.OK_OPTION) {
+					parent.getCont().removeAll();
+					parent.getCont().add(new PanFormInstall(parent));
+					parent.getCont().repaint();
+					parent.getCont().revalidate();
+				}
+			}
 		}
 	}
 	

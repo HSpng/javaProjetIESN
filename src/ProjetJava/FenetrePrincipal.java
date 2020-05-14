@@ -22,7 +22,6 @@ public class FenetrePrincipal extends JFrame{
     
     public FenetrePrincipal() {
     	super("Programme Installation"); 
-    	
     	setSize(800,500);
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	setLocationRelativeTo(null);
@@ -76,8 +75,7 @@ public class FenetrePrincipal extends JFrame{
     	
     	cont = getContentPane();
     	cont.setLayout(new BorderLayout());
-    	cont.add(panPrincipal, BorderLayout.CENTER);
-    	
+    	cont.add(panPrincipal, BorderLayout.CENTER);    	
     	
     	//Création du panneau de connexion
     	panConnection = new JPanel();
